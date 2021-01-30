@@ -1,3 +1,3 @@
 # vue 任务2
 
-![](img/ceshi.png)
+![img](img/ceshi.png)
