@@ -1,4 +1,4 @@
 # vue 任务2
 
-[demo](https://lzrwula.github.io/vue222/dist/index.html)
+[demo](vue222/img/-5a54bc9162c68aa3.jpg)
 
