@@ -1,111 +1,173 @@
 <style lang='scss' scoped>
-.login-page {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #35a9f7;
-
-  .header-top {
-    display: flex;
-    justify-content: center;
-    margin: 5vh 0;
-    font-size: 10vw;
-
-    .header-text {
-      color: white;
-      font-weight: bold;
-      text-shadow: 1vw 1vw 4vw black;
-    }
-  }
-
-  .login-content {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    margin: 5vh 0;
-
-    .login-form {
+.blackc{
+    color: rgb(200, 200, 200);
+    background-color:  #32315b;    
+    #content li{
       width: 90%;
-
-      van-field {
-        height: 25px;
-      }
+      height: 12vh;
+      background-color: #45446c;
+      border-radius: 40px;
+      margin:0;padding:0;list-style:none;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
     }
-  }
+    #content span{
+      align-self:flex-start;
+      margin-left: 6vw;
+    }
+    #content ul{
+      width: 100%;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #content1,#content2{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    #content{
+      width: 100vw;
+      margin-top: 21vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .day{
+      font-size: 30px;
+    }
+    li p{
+      font-size: 30px;
+    }
 }
+
+.whitec{
+    color: rgb(200, 200, 200);
+    background-color: #ffffff;    
+    #content li{
+      width: 90%;
+      height: 12vh;
+      background-color: #ffffff;
+      border-radius: 40px;
+      border: #d0d0d3 2px solid;
+      margin:0;padding:0;list-style:none;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    #content span{
+      align-self:flex-start;
+      margin-left: 6vw;
+    }
+    #content ul{
+      width: 100%;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #content1,#content2{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    #content{
+      width: 100vw;
+      margin-top: 21vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .day{
+      font-size: 30px;
+    }
+    li p{
+      font-size: 30px;
+    }
+}
+
+
 </style>
 
 <template>
-  <div class="login-page">
-    <div class="header-top">
-      <p class="header-text">TODO</p>
+  <div :class="judge?'blackc':'whitec'">
+  <div id="content">
+    <div id="content1">
+      <span>TO DO</span>
+      <ul>
+        <li v-show="!things[index].flag" :key="index" v-for="(item,index) in things">
+          <van-checkbox icon-size="35px" :value="things[index].flag" @click="xuanze(index,things[index].flag)"></van-checkbox>
+          <p>{{things[index].thing}}</p>
+          <van-icon size="40px" @click="show = true,weizhi(index)" name="calendar-o" />
+          <div class="day" title=">" size="2px" :value="date">{{things[index].date2}}</div>
+          <van-calendar v-model="show" @confirm="onConfirm" />
+        </li>
+
+      </ul>
     </div>
-    <div class="login-content">
-      <van-form class="login-form" @submit="onLogin" @failed="onFailed">
-        <van-field
-          v-model="loginName"
-          name="username"
-          label="用户名"
-          :rules="[{ required: true, message: '请输入账户' }]"
-          placeholder="请输入账户"
-        />
-        <van-field
-          v-model="loginPass"
-          type="password"
-          name="password"
-          label="密码"
-          :rules="[{ required: true, message: '请输入密码' }]"
-          placeholder="请输入密码"
-        />
-        <div style="margin: 16px 0;">
-          <van-button round block type="primary" native-type="submit">
-              提交
-          </van-button>
-        </div>
-      </van-form>
+    <div id="content2">
+      <span>COMPLETED</span>
+      <ul>
+        <li v-show="things[index].flag" :key="index" v-for="(item,index) in things">
+          <van-checkbox icon-size="35px" :value="things[index].flag" @click="xuanze(index,things[index].flag)"></van-checkbox>
+          <p>{{things[index].thing}}</p>
+          <van-icon size="40px" @click="show = true,weizhi(index)" name="calendar-o" />
+          <div class="day" title=">" size="2px" :value="date" >{{things[index].date2}}</div>
+          <van-calendar v-model="show" @confirm="onConfirm" />
+        </li>
+      </ul>
     </div>
   </div>
+</div>
+  
 </template>
 
 <script>
-import { LOGIN } from '@/store/login'
-import { mapActions } from 'vuex'
+// import { LOGIN } from '@/store/login'
+// import { mapActions } from 'vuex'
+
+import { mapState,mapMutations } from 'vuex'
 
 export default {
-  data () {
+  data() {
     return {
-      loginName: '',
-      loginPass: ''
-    }
+      checked:true,
+      date: '',
+      show: false,
+      index1:1,
+      flag0:false
+    };
   },
   methods: {
-    ...mapActions([LOGIN]),
-    onLogin: async function (values) {
-      console.log('submit', values);
-      if (!values || values.errors) return;
-      try {
-        const result = await this[LOGIN]({
-          loginName: values.username,
-          loginPass: values.password
-        })
-        if (result.token) {
-          this.$toast.success('登录成功')
-          this.loading = false
-          console.log(result)
-          setTimeout(() => {
-            //  跳转主页
-            //  this.$router.push()
-          }, 1000)
-        }
-      } catch (err) {
-        this.loading = false
-        this.$toast(err.message)
-      }
+    ...mapMutations(['riqi','xzflag']),
+    formatDate(date) {
+      return `${date.getMonth() + 1}/${date.getDate()}`;
     },
-    onFailed(errorInfo) {
-      console.log('failed', errorInfo);
+    onConfirm(date) {
+      this.show = false;
+      this.date = this.formatDate(date);
+      const canshu={a:this.date,b:this.index1}
+      this.riqi(canshu);
     },
-  }
+    xuanze(index,tflag){
+      this.flag0 = !tflag;
+      // console.log(index);
+      console.log(this.things);
+      const canshu = {a:this.flag0,b:index};
+      this.xzflag(canshu);
+    },
+    weizhi(index){
+      this.index1 = index;
+    }
+  },
+  computed:{
+      ...mapState(['things','flag1','judge']),
+    }
 }
 </script>
